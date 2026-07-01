@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+  SmartCart - User Management Dashboard
+  Add users, generate tokens, view/deactivate active sessions.
+  Replace firebaseConfig below with your own project's config.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SmartCart - User Management Dashboard</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f7f7f9; }
+  h1 { color: #222; }
+  form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin-bottom: 30px; }
+  input { padding: 8px; margin: 6px 6px 6px 0; border: 1px solid #ccc; border-radius: 4px; width: 200px; }
+  button { padding: 8px 16px; background: #2563eb; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  button:hover { background: #1d4ed8; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+  th { background: #f0f0f3; }
+  .status-active { color: #16a34a; font-weight: bold; }
+  .status-inactive { color: #999; }
+  .deactivate-btn { background: #dc2626; padding: 6px 10px; font-size: 13px; }
+  .deactivate-btn:hover { background: #b91c1c; }
+</style>
+</head>
+<body>
+
+<h1>SmartCart - User Management</h1>
+
+<form id="addUserForm">
+  <h3>Add New User</h3>
+  <input type="text" id="userId" placeholder="User ID" required>
+  <input type="tel" id="mobile" placeholder="Mobile Number" required>
+  <button type="submit">Add User &amp; Generate Token</button>
+</form>
+
+<h3>Users</h3>
+<table>
+  <thead>
+    <tr>
+      <th>User ID</th>
+      <th>Mobile</th>
+      <th>Token</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="userTableBody"></tbody>
+</table>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  const usersRef = db.ref("users");
+
+  function generateToken(length = 8) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let token = "";
+    for (let i = 0; i < length; i++) {
+      token += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return token;
+  }
+
+  document.getElementById("addUserForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const userId = document.getElementById("userId").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const token = generateToken();
+    if (!userId || !mobile) return;
+
+    usersRef.child(userId).set({
+      userId: userId,
+      mobile: mobile,
+      token: token,
+      active: true,
+      createdAt: Date.now()
+    }).then(() => {
+      document.getElementById("addUserForm").reset();
+    }).catch((err) => {
+      alert("Error adding user: " + err.message);
+    });
+  });
+
+  usersRef.on("value", (snapshot) => {
+    const data = snapshot.val() || {};
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = "";
+
+    Object.values(data).forEach((user) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${user.userId}</td>
+        <td>${user.mobile}</td>
+        <td><code>${user.token}</code></td>
+        <td class="${user.active ? 'status-active' : 'status-inactive'}">
+          ${user.active ? "Active" : "Inactive"}
+        </td>
+        <td>
+          ${user.active
+            ? `<button class="deactivate-btn" onclick="deactivateUser('${user.userId}')">Deactivate</button>`
+            : ""}
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  });
+
+  function deactivateUser(userId) {
+    usersRef.child(userId).update({ active: false, deactivatedAt: Date.now() })
+      .catch((err) => alert("Error deactivating user: " + err.message));
+  }
+</script>
+
+</body>
+</html>

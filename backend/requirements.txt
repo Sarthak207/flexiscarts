@@ -1,0 +1,15 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+SQLAlchemy==2.0.35
+psycopg2-binary==2.9.9
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-jose[cryptography]==3.3.0
+passlib==1.7.4
+# Pinned explicitly: passlib 1.7.4's bcrypt backend reads a `bcrypt.__about__`
+# attribute that was removed in bcrypt>=4.1, causing a hard crash on the
+# very first hash() call. This isn't hypothetical -- it reproduces on a
+# clean install of the "obvious" `passlib[bcrypt]` pin. 4.0.1 is the last
+# bcrypt release before that attribute was removed.
+bcrypt==4.0.1
+python-multipart==0.0.9

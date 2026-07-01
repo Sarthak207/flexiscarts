@@ -1,0 +1,11 @@
+opencv-python==4.10.0.84
+requests==2.32.3
+python-dotenv==1.0.1
+numpy==1.26.4
+
+# Only needed on the actual Raspberry Pi (CSI camera). Install separately
+# via apt on Raspberry Pi OS, NOT pip -- picamera2 depends on system
+# libcamera packages that pip cannot provide:
+#   sudo apt install -y python3-picamera2
+# See README.md for the full Pi-specific setup, including why this
+# doesn't go in this requirements.txt.

@@ -1,0 +1,35 @@
+# Runs the whole backend stack on the Raspberry Pi 4 itself, per the
+# chosen single-box demo architecture. `docker compose up -d` on the Pi
+# brings up Postgres + the FastAPI API together, with the API waiting for
+# Postgres to be healthy before starting.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: smartcart
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-smartcart}
+      POSTGRES_DB: smartcart
+    volumes:
+      - smartcart_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartcart"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg2://smartcart:${POSTGRES_PASSWORD:-smartcart}@db:5432/smartcart
+    ports:
+      - "8000:8000"
+
+volumes:
+  smartcart_pgdata:

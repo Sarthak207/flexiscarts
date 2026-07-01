@@ -1,0 +1,54 @@
+{
+  "_comment": "Example structure for the /products node in Firebase Realtime Database. Import via Firebase Console > Realtime Database > Import JSON.",
+
+  "products": {
+    "bottle": {
+      "name": "Water Bottle 500ml",
+      "price": 20,
+      "expectedWeight": 520,
+      "category": "Beverages",
+      "imageUrl": ""
+    },
+    "chips_packet": {
+      "name": "Potato Chips 100g",
+      "price": 30,
+      "expectedWeight": 105,
+      "category": "Snacks",
+      "imageUrl": ""
+    }
+  },
+
+  "_sessions_example": {
+    "demo_session": {
+      "userId": "user_001",
+      "cartWeight": 0,
+      "lastDetectedProduct": {
+        "key": "bottle",
+        "name": "Water Bottle 500ml",
+        "price": 20,
+        "expectedWeight": 520,
+        "weightVerified": true,
+        "detectedAt": 0
+      },
+      "items": {
+        "bottle": {
+          "name": "Water Bottle 500ml",
+          "price": 20,
+          "quantity": 1
+        }
+      }
+    }
+  },
+
+  "_users_example": {
+    "users": {
+      "user_001": {
+        "userId": "user_001",
+        "mobile": "9999999999",
+        "token": "aB3xY9Zq",
+        "active": true,
+        "createdAt": 0
+      }
+    }
+  }
+}
