@@ -1,8 +1,8 @@
-# SmartCart Backend (Milestone 1)
+# SmartCart Backend (Milestones 1 & 6)
 
 FastAPI + PostgreSQL backend replacing the old direct-to-Firebase architecture.
 Runs on the Raspberry Pi 4 itself via Docker Compose, alongside the camera
-detection module and the (upcoming) touchscreen UI.
+detection module, the touchscreen UI, and the admin dashboard.
 
 ## Setup
 
@@ -53,24 +53,49 @@ Postgres setup above via docker-compose.)
 |---|---|---|
 | `POST /auth/admin/login` | — | Admin dashboard |
 | `POST /users` | Admin JWT | Admin dashboard (create shopper, returns token once) |
-| `GET /users` | Admin JWT | Admin dashboard |
+| `GET /users` | Admin JWT | Admin dashboard (shoppers only, admin accounts excluded) |
 | `PATCH /users/{id}` | Admin JWT | Admin dashboard (activate/deactivate) |
 | `POST /products` | Admin JWT | Admin dashboard / `seed_products.py` |
-| `GET /products` | — | Touchscreen UI (catalog display) |
+| `GET /products` | — | Touchscreen UI (catalog display, active only) |
+| `GET /products/all` | Admin JWT | Admin dashboard (includes inactive) |
+| `PATCH /products/{id}` | Admin JWT | Admin dashboard (edit / deactivate / reactivate) |
 | `GET /products/by-label/{label}` | — | Pi detection module |
-| `POST /sessions/start` | shopper token in body | Touchscreen UI (cart login) |
+| `GET /sessions` | Admin JWT | Admin dashboard (live sessions overview, filterable by status) |
+| `POST /sessions/start` | shopper token in body, rate-limited | Touchscreen UI (cart login) |
+| `GET /sessions/active` | — | ESP32 firmware, Pi detection module, touchscreen UI (session discovery) |
 | `GET /sessions/{id}` | — | Touchscreen UI (live cart view) |
 | `POST /sessions/{id}/close` | — | Touchscreen UI (checkout) |
 | `POST /sessions/{id}/items` | `X-Device-Key` header | Pi detection module |
 | `DELETE /sessions/{id}/items/{item_id}` | `X-Device-Key` header | Pi detection module (future: item removal) |
 | `POST /sessions/{id}/weight` | `X-Device-Key` header | ESP32 firmware |
+| `GET /recommendations/frequently-bought-with/{product_id}` | — | (available for future UI use) |
+| `GET /recommendations/for-shopper/{session_id}` | — | Touchscreen UI (shopping-screen suggestions panel) |
+| `GET /analytics/summary` | Admin JWT | Admin dashboard (Analytics panel) |
 
-## What's intentionally NOT here yet (see Implementation Plan / README future scope)
+## Recommendations & analytics (Milestone 6)
+
+Both are plain SQL aggregation over real closed-session purchase history —
+not a trained model. See the docstrings in `app/routers/recommendations.py`
+and `app/routers/analytics.py` for the full reasoning, but briefly:
+
+- **Frequently bought together**: co-occurrence count across all CLOSED
+  sessions containing a given product.
+- **Personalized "you usually buy"**: a shopper's own repeat-purchase
+  pattern from their past CLOSED sessions, excluding whatever's already
+  in their current cart. Falls back to store-wide trending products
+  (clearly labeled `"trending"`, not silently passed off as personalized)
+  for a shopper with no purchase history yet.
+- Every response includes a `basis` field (`frequently_bought_together` /
+  `your_past_purchases` / `trending` / `not_enough_data`) so callers never
+  have to guess why a list is empty or where a suggestion came from.
+
+## What's intentionally NOT here (see Implementation Plan / README future scope)
 
 - Payment processing — `POST /sessions/{id}/close` computes and returns an
   itemized bill total; it does not charge anyone. Real payment gateway
   integration needs a merchant account and is out of scope for this build.
 - Barcode-based product ID — descoped per your confirmation that products
   don't have real barcodes to scan; camera-only detection.
-- Recommendation engine — planned for Milestone 6, once real purchase
-  history exists to compute it from.
+- A trained recommendation/ML model — a single-cart academic pilot doesn't
+  generate remotely enough data to train one meaningfully; SQL aggregation
+  over real purchase history is the honest, defensible scope (see above).

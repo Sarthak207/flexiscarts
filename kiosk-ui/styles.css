@@ -1,0 +1,444 @@
+/* ==========================================================================
+   SmartCart Kiosk UI — design tokens
+   --------------------------------------------------------------------------
+   Subject: an in-cart touchscreen glanced at while pushing a cart down an
+   aisle, sized for a 7" panel (~1024x600 landscape). The design leans into
+   the physical objects a shopping trip already involves — a paper receipt,
+   a printed price tag — rather than a generic dashboard/SaaS look.
+
+   Palette:
+     --ink        #2B2620  primary text, near-black warm charcoal
+     --paper      #FBF7EE  background, warm receipt-paper cream
+     --evergreen  #1F4B3F  brand / primary actions, fresh-produce green
+     --amber      #E8A33D  price emphasis (the total)
+     --tomato     #C1432A  destructive / alert actions
+     --sage       #DCE8DD  secondary surfaces / cards
+
+   Type:
+     Oswald       — condensed, bold, aisle-signage headlines & the big total
+     Inter        — UI labels, buttons, body copy
+     IBM Plex Mono — the itemized receipt list, evoking receipt-printer text
+   ========================================================================== */
+
+:root {
+  --ink: #2B2620;
+  --paper: #FBF7EE;
+  --evergreen: #1F4B3F;
+  --evergreen-dark: #163A30;
+  --amber: #E8A33D;
+  --tomato: #C1432A;
+  --sage: #DCE8DD;
+  --sage-line: #C3D6C6;
+
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius: 14px;
+  --touch-min: 64px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* kiosk: no accidental scroll-bounce on a touch panel */
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- Top bar ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--sage-line);
+  height: 44px;
+}
+
+.topbar-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 18px;
+  color: var(--evergreen);
+}
+
+.topbar-cart {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+  opacity: 0.6;
+  background: var(--sage);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.topbar-clock {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+/* ---------- Screens ---------- */
+
+.screen {
+  display: none;
+  height: calc(100% - 44px);
+  width: 100%;
+  animation: fade-in 220ms ease-out;
+}
+
+.screen-active { display: block; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  min-height: var(--touch-min);
+  padding: 0 28px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  transition: transform 80ms ease-out, filter 120ms ease-out;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--evergreen);
+  color: var(--paper);
+}
+.btn-primary:active { background: var(--evergreen-dark); }
+
+.btn-secondary {
+  background: var(--sage);
+  color: var(--ink);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--tomato);
+  border: 1.5px solid var(--tomato);
+}
+
+.btn-block { width: 100%; }
+
+/* ==========================================================================
+   LOGIN SCREEN
+   ========================================================================== */
+
+.login-panel {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 28px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: var(--evergreen);
+  margin: 0 0 4px;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+
+.subtext {
+  font-size: 14px;
+  color: var(--ink);
+  opacity: 0.65;
+  margin: 0 0 18px;
+}
+
+.code-display {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.code-slot {
+  width: 40px;
+  height: 52px;
+  border-radius: 8px;
+  background: var(--sage);
+  border: 1.5px solid var(--sage-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.code-slot.filled {
+  background: var(--paper);
+  border-color: var(--evergreen);
+}
+
+.login-error {
+  min-height: 20px;
+  color: var(--tomato);
+  font-size: 13px;
+  font-weight: 600;
+  margin: 4px 0 8px;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 560px;
+  margin-bottom: 14px;
+}
+
+.key {
+  min-height: 44px;
+  border-radius: 8px;
+  background: var(--paper);
+  border: 1.5px solid var(--sage-line);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.key:active { background: var(--sage); }
+
+.login-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* ==========================================================================
+   SHOPPING SCREEN
+   ========================================================================== */
+
+.shopping-layout {
+  display: flex;
+  height: 100%;
+}
+
+.receipt-pane {
+  flex: 1 1 60%;
+  padding: 18px 20px;
+  overflow-y: auto;
+  border-right: 1px dashed var(--sage-line);
+}
+
+.receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.receipt-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.receipt-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.receipt-empty {
+  font-size: 14px;
+  opacity: 0.5;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.receipt-list { font-family: var(--font-mono); font-size: 14px; }
+
+.receipt-row {
+  display: flex;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dotted var(--sage-line);
+}
+
+.receipt-row-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.receipt-row-qty { opacity: 0.55; margin-left: 6px; white-space: nowrap; }
+.receipt-row-fill {
+  flex: 1;
+  border-bottom: 1px dotted var(--sage-line);
+  margin: 0 6px 4px;
+}
+.receipt-row-price { white-space: nowrap; font-weight: 600; }
+.receipt-row-pending {
+  color: var(--amber);
+  font-size: 11px;
+  display: block;
+  margin-top: -2px;
+}
+
+/* ---------- Signature element: the price-tag total ---------- */
+
+.total-pane {
+  flex: 0 0 40%;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.price-tag {
+  background: var(--evergreen);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: 22px 20px 18px;
+  position: relative;
+  border: 2px dashed rgba(251, 247, 238, 0.35);
+  margin-bottom: 6px;
+}
+.price-tag::before {
+  /* the punched "hole" of a price tag */
+  content: "";
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px dashed var(--sage-line);
+}
+
+.price-tag-label {
+  display: block;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.price-tag-amount {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 4px 0 2px;
+  transition: transform 160ms ease-out;
+}
+.price-tag-amount.bump { transform: scale(1.06); color: var(--amber); }
+
+.price-tag-count {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+/* ---------- Recommendations panel (informational only -- no add-to-cart
+   action, since items are only ever added via the camera/load cell, not
+   a touchscreen tap; see app.js and kiosk-ui/README.md) ---------- */
+
+.recs-panel {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--sage-line);
+}
+
+.recs-label {
+  display: block;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  opacity: 0.55;
+  margin-bottom: 8px;
+}
+
+.recs-list { display: flex; flex-direction: column; }
+
+.recs-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  padding: 6px 0;
+}
+
+.recs-item-name { opacity: 0.85; }
+.recs-item-price { font-family: var(--font-mono); opacity: 0.6; }
+
+/* ==========================================================================
+   CHECKOUT SCREEN
+   ========================================================================== */
+
+.checkout-panel {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 24px 24px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.receipt-pane-final {
+  width: 100%;
+  max-width: 460px;
+  border-right: none;
+  border: 1px dashed var(--sage-line);
+  border-radius: var(--radius);
+  margin: 12px 0;
+  max-height: 260px;
+}
+
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  padding: 10px 4px 4px;
+  border-top: 1.5px solid var(--ink);
+  margin-top: 6px;
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .screen, .price-tag-amount { animation: none; transition: none; }
+}

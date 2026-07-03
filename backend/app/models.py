@@ -148,6 +148,19 @@ class CartItem(Base):
     session: Mapped[CartSession] = relationship(back_populates="items")
     product: Mapped[Product] = relationship()
 
+    @property
+    def product_name(self) -> str:
+        """
+        Convenience accessor for API responses (see schemas.CartItemOut).
+        Added while building the kiosk UI (Milestone 4), which needs to
+        show a product name in the cart list without a second lookup
+        round-trip per item -- reads through the existing `product`
+        relationship rather than duplicating the name onto CartItem
+        itself, so there's still exactly one place (Product.name) that
+        can ever disagree with itself.
+        """
+        return self.product.name
+
 
 class WeightEvent(Base):
     """Raw weight readings from the ESP32, one row per reading (audit trail)."""

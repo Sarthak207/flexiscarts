@@ -41,6 +41,44 @@ def list_products(db: Session = Depends(get_db)):
     return db.query(Product).filter(Product.active.is_(True)).all()
 
 
+@router.get("/all", response_model=list[schemas.ProductOut])
+def list_all_products(db: Session = Depends(get_db), _admin: str = Depends(get_current_admin)):
+    """
+    Admin-only: includes inactive/discontinued products too, so the
+    dashboard (Milestone 5) can show and reactivate them. NOTE: registered
+    ABOVE /{product_id} in this file -- same routing-order reason as
+    /sessions/active in routers/sessions.py; a literal path segment must
+    be declared before a same-shape int/str-typed path parameter or
+    requests to /products/all would instead be routed to
+    get_product(product_id="all") and fail type validation.
+    """
+    return db.query(Product).order_by(Product.created_at.desc()).all()
+
+
+@router.patch("/{product_id}", response_model=schemas.ProductOut)
+def update_product(
+    product_id: int,
+    payload: schemas.ProductUpdate,
+    db: Session = Depends(get_db),
+    _admin: str = Depends(get_current_admin),
+):
+    """
+    Admin-only edits (price changes, deactivating a discontinued product,
+    fixing a detection_label mapping, etc). Existing cart_items keep their
+    unit_price_snapshot regardless of what happens here afterward -- see
+    the models.py docstring on why price is snapshotted per cart item.
+    """
+    product = db.get(Product, product_id)
+    if product is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Product not found")
+    updates = payload.model_dump(exclude_unset=True)
+    for field, value in updates.items():
+        setattr(product, field, value)
+    db.commit()
+    db.refresh(product)
+    return product
+
+
 @router.get("/by-label/{detection_label}", response_model=schemas.ProductOut)
 def get_product_by_label(detection_label: str, db: Session = Depends(get_db)):
     """

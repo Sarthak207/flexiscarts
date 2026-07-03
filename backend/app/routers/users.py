@@ -42,7 +42,24 @@ def create_user(
 
 @router.get("", response_model=list[schemas.UserOut])
 def list_users(db: Session = Depends(get_db), _admin: str = Depends(get_current_admin)):
-    return db.query(User).order_by(User.created_at.desc()).all()
+    """
+    Lists SHOPPERS specifically (is_admin=False), not every row in the
+    users table. Found via testing the admin dashboard's Shoppers panel
+    end to end: without this filter, the bootstrap admin account (and any
+    other admin) shows up in a table meant for managing shopper cart-login
+    codes, with a "Deactivate" button that could lock an admin out of
+    their own account by mistake. Admin account management isn't a
+    feature this build has a dedicated UI for -- there's exactly one
+    bootstrap admin, created automatically on first startup (see
+    main.py._bootstrap_admin), and adding/removing additional admins is
+    documented as future scope rather than exposed here.
+    """
+    return (
+        db.query(User)
+        .filter(User.is_admin.is_(False))
+        .order_by(User.created_at.desc())
+        .all()
+    )
 
 
 @router.patch("/{user_id}", response_model=schemas.UserOut)

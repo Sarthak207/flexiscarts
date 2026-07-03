@@ -7,7 +7,7 @@ from app.config import get_settings
 from app.core.security import hash_password
 from app.database import Base, SessionLocal, engine
 from app.models import User
-from app.routers import auth, items, products, sessions, users, weight
+from app.routers import analytics, auth, items, products, recommendations, sessions, users, weight
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("smartcart")
@@ -31,6 +31,8 @@ app.include_router(products.router)
 app.include_router(sessions.router)
 app.include_router(items.router)
 app.include_router(weight.router)
+app.include_router(recommendations.router)
+app.include_router(analytics.router)
 
 
 @app.on_event("startup")

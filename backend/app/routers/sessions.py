@@ -1,16 +1,60 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app import schemas
-from app.core.security import verify_token
+from app.core.security import get_current_admin, login_rate_limiter, verify_token
 from app.database import get_db
 from app.models import CartItem, CartSession, SessionStatus, User
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 
+@router.get("", response_model=list[schemas.SessionListOut])
+def list_sessions(
+    status_filter: SessionStatus | None = None,
+    db: Session = Depends(get_db),
+    _admin: str = Depends(get_current_admin),
+):
+    """
+    Admin-only overview for the dashboard (Milestone 5) -- lets staff see
+    every cart's status at a glance instead of needing a session id to
+    look anything up. Nothing in the original prototype had ANY session
+    visibility at all; the old dashboard only ever showed /users.
+
+    NOTE on N+1 queries: this computes item_count/total per session with
+    a separate query per session rather than one aggregate SQL query.
+    Documented as an acceptable simplification at this project's actual
+    scale (a handful of sessions per day for a single-cart academic
+    build, not thousands) -- a real high-traffic deployment would want a
+    single query with a SQL SUM/COUNT and a GROUP BY instead, noted here
+    as a concrete optimization rather than silently living with it.
+    """
+    query = db.query(CartSession)
+    if status_filter is not None:
+        query = query.filter(CartSession.status == status_filter)
+    sessions = query.order_by(CartSession.started_at.desc()).limit(200).all()
+
+    results = []
+    for session in sessions:
+        items = db.query(CartItem).filter(CartItem.session_id == session.id).all()
+        total = sum(float(i.unit_price_snapshot) * i.quantity for i in items)
+        results.append(
+            schemas.SessionListOut(
+                id=session.id,
+                cart_id=session.cart_id,
+                status=session.status,
+                shopper_name=session.user.name if session.user else None,
+                item_count=sum(i.quantity for i in items),
+                total=round(total, 2),
+                started_at=session.started_at,
+                ended_at=session.ended_at,
+            )
+        )
+    return results
+
+
 @router.post("/start", response_model=schemas.SessionOut, status_code=status.HTTP_201_CREATED)
-def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
+def start_session(payload: schemas.SessionStart, request: Request, db: Session = Depends(get_db)):
     """
     Real session creation, replacing the hardcoded global "demo_session"
     path every device used to share (Phase 1 finding: the whole system
@@ -21,7 +65,19 @@ def start_session(payload: schemas.SessionStart, db: Session = Depends(get_db)):
     created and its id becomes the scope for every item/weight event that
     follows, until checkout. Multiple carts running concurrently each get
     their own session id and don't interfere with each other.
+
+    Rate-limited by client IP (see core/security.py LoginRateLimiter) --
+    the login code is short enough to type on a touchscreen (8 chars,
+    see generate_shopper_token), which means it also needs guess-limiting
+    to stay brute-force-resistant.
     """
+    client_id = request.client.host if request.client else "unknown"
+    if not login_rate_limiter.check_and_record(client_id):
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            "Too many login attempts. Please wait a minute and try again.",
+        )
+
     candidates = db.query(User).filter(User.active.is_(True)).all()
     matched_user = None
     for user in candidates:

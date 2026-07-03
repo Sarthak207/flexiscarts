@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SmartCart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <span class="topbar-brand">SmartCart</span>
+    <span class="topbar-cart" id="topbar-cart-id">cart-01</span>
+    <span class="topbar-clock" id="topbar-clock">--:--</span>
+  </div>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <section id="screen-login" class="screen screen-active">
+    <div class="login-panel">
+      <p class="eyebrow">Ready when you are</p>
+      <h1 class="headline">Enter your cart code</h1>
+      <p class="subtext">Find your 8-character code on your SmartCart card.</p>
+
+      <div class="code-display" id="code-display" aria-live="polite">
+        <span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span><span class="code-slot"></span>
+      </div>
+
+      <p class="login-error" id="login-error" role="alert"></p>
+
+      <div class="keyboard" id="keyboard"></div>
+
+      <div class="login-actions">
+        <button class="btn btn-secondary" id="btn-clear">Clear</button>
+        <button class="btn btn-primary" id="btn-enter">Start shopping</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOPPING SCREEN ============ -->
+  <section id="screen-shopping" class="screen">
+    <div class="shopping-layout">
+
+      <div class="receipt-pane">
+        <div class="receipt-header">
+          <span class="receipt-title">Your cart</span>
+          <span class="receipt-meta" id="receipt-meta">started just now</span>
+        </div>
+        <div class="receipt-list" id="receipt-list">
+          <p class="receipt-empty" id="receipt-empty">Your cart is empty. Add an item to see it here.</p>
+        </div>
+      </div>
+
+      <div class="total-pane">
+        <div class="price-tag" id="price-tag">
+          <span class="price-tag-label">Total</span>
+          <span class="price-tag-amount" id="price-tag-amount">₹0.00</span>
+          <span class="price-tag-count" id="price-tag-count">0 items</span>
+        </div>
+
+        <button class="btn btn-primary btn-block" id="btn-checkout">Checkout</button>
+
+        <div class="recs-panel" id="recs-panel" style="display:none;">
+          <span class="recs-label" id="recs-label">You might also like</span>
+          <div class="recs-list" id="recs-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ CHECKOUT / RECEIPT SCREEN ============ -->
+  <section id="screen-checkout" class="screen">
+    <div class="checkout-panel">
+      <p class="eyebrow" id="checkout-eyebrow">All set</p>
+      <h1 class="headline">Thanks for shopping with us</h1>
+
+      <div class="receipt-pane receipt-pane-final">
+        <div class="receipt-list" id="final-receipt-list"></div>
+        <div class="receipt-total-row">
+          <span>Total</span>
+          <span id="final-receipt-total">₹0.00</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="btn-new-shopper">Start next trip</button>
+    </div>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
