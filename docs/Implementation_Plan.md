@@ -57,9 +57,3 @@ Rather than dumping the entire Phase 3–8 codebase at once, I'll build and shar
 5. **Admin dashboard rework** — rebuilt against the new backend (auth-gated), adds product/inventory management and live session visibility, not just user tokens.
 6. **AI features** — frequently-bought-together / basket-based recommendations using real SQL aggregation over purchase history (feasible with the data model above); explicitly **not** attempting a custom-trained product classifier as a "quantized edge model" claim unless you have or plan to collect a real labeled product image dataset — I'll implement barcode-based product ID as the realistic accuracy improvement instead, and document custom model training as future scope with an honest explanation of what a real dataset/training effort would require.
 7. **Documentation set** (Phases 5–7 of your brief): architecture diagrams, hardware/software/DB/CV/embedded docs, testing docs, README rewrite, contribution report — written against the *actual* system once it's built, not aspirational.
-
-## 4. What I need confirmed before I start writing code
-
-- Does **Postgres + FastAPI running on the Pi 4 itself** work for you (single-box demo), or is there a separate laptop/server it should run on during your actual in-store/demo setup?
-- For barcode fallback (my proposed near-term accuracy fix instead of promising a custom-trained model): do your products already have barcodes you can scan/photograph, or would this need to be simulated for the demo?
-- OK to proceed with **Milestone 1 (backend core)** first?
