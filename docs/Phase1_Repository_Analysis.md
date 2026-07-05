@@ -163,17 +163,3 @@ any real session-creation flow (QR/RFID scan-in), any barcode fallback.
 7. **Shutdown:** Neither script handles `SIGTERM`/`Ctrl+C` gracefully beyond the Pi script's `try/finally` releasing the camera; the ESP32 has no shutdown state at all (it's an infinite loop firmware, as expected for embedded, but there's also no low-battery or power-loss handling).
 
 ---
-
-## 5. What I need from you before Phase 2–8
-
-Per the brief's own instruction to propose a plan before writing code, here's where I'm blocked without more input:
-
-1. **Hardware list** — you mentioned you'd provide the actual hardware purchased. I don't have it yet (ESP32 board variant, camera module + host — is the Pi a Pi 4/5/Zero 2W?, load cell + HX711 specs, display if any, power source/battery, cart chassis). This materially changes Phase 2 and a lot of Phase 3's feasibility calls (e.g., quantization/edge-optimization choices depend heavily on whether inference runs on the Pi CPU, a Coral/NCS accelerator, or is offloaded elsewhere).
-2. **Scope for this pass** — the full brief (Phases 1–8, ~16 deliverable categories) is a multi-week capstone-level body of work. I'd rather build it well in stages than rush a shallow version of everything. My suggested first milestone, once I have the hardware list:
-   - Fix the architectural single-session/no-backend/no-security-rules issues with a small real backend (this is the highest-leverage change — almost everything else depends on it existing).
-   - Rework the Pi detection script into a proper module (config-driven, logged, retried, per-item cooldown, barcode fallback as a realistic near-term win over "retrain a custom model").
-   - Rework the ESP32 firmware (delta-weight verification, watchdog, secrets separated out, state machine).
-   - Then documentation (Phases 5–7) once the system it's documenting is actually real.
-3. **Do you have a working Firebase project already** (with data in it), or should the improved system move to a proper backend (e.g., FastAPI/Node + Postgres) with Firebase optionally kept just for realtime device sync? This is a real architectural fork and I'd rather you weigh in than assume.
-
-Let me know on those three points and I'll move into Phase 2 (hardware) and start Phase 3 implementation in scoped, reviewable chunks rather than one giant drop.
