@@ -93,7 +93,3 @@ I'll flag this at the end with a direct question, because it decides whether Pha
 | Battery + XL4015 + Charger | No software interface — pure power layer | N/A |
 
 ---
-
-## 3. Question before I proceed to Phase 3
-
-Given there's no ESP32 board on your purchase list, and the touchscreen is HDMI+USB (a Pi-native interface), I want to confirm the target architecture rather than assume:
