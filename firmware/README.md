@@ -31,6 +31,10 @@ Open the Serial Monitor at 115200 baud:
 3. Send `CAL:<grams>`, e.g. `CAL:500`.
 4. The firmware computes and saves the calibration factor to flash (NVS) — it persists across power cycles and re-flashes, so you only need to do this once per physical load cell (redo it if you ever swap the load cell for a different unit).
 
+Prototype calibration photo slot:
+
+`../docs/images/hx711-calibration-serial.jpg`
+
 ## What it does at runtime
 
 1. Connects to Wi-Fi (bounded retries with backoff, not an infinite block).

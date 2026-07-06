@@ -99,7 +99,11 @@ Full future-scope discussion: Technical Report, Section 14.
 
 ## Images
 
-*(Placeholders — replace with real photos once the physical cart is assembled: cart overview, touchscreen mid-trip, admin dashboard sessions view, ESP32/load-cell mounting detail.)*
+The image gallery in `docs/UI_images.md` shows the current kiosk UI and the planned slots for the prototype hardware photos:
+
+![SmartCart kiosk shopping screen](docs/images/kiosk-shopping-cart.png)
+
+Add the remaining uploaded photos to `docs/images/` using the filenames listed in `docs/UI_images.md` so the kiosk, firmware, and hardware docs can display the full build record.
 
 ## Documentation
 

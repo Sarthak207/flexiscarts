@@ -14,6 +14,13 @@ price tag, the one deliberately bold element in an otherwise quiet UI.
 See the comment block at the top of `styles.css` for the full token
 system (palette, type roles, layout rationale).
 
+![SmartCart kiosk shopping screen](../docs/images/kiosk-shopping-cart.png)
+
+Additional kiosk screenshots should be stored at:
+
+- `docs/images/kiosk-login.png` — login-code keypad screen
+- `docs/images/kiosk-checkout-receipt.png` — post-checkout receipt screen
+
 ## Setup
 
 No dependencies to install — it's static files. Just point `config.js` at

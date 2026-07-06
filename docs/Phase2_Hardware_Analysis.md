@@ -37,6 +37,11 @@ I'll flag this at the end with a direct question, because it decides whether Pha
 - **Power requirements:** HX711 modules typically run at 2.6V–5.5V logic/supply, so it's compatible with either 3.3V (ESP32-native) or 5V logic depending on the specific breakout board's onboard regulator — worth confirming which variant you received, since some breakouts assume 5V-only. Current draw is minimal (single-digit mA), a non-issue against your battery budget.
 - **Integration:** Physically mounted between the cart's basket and frame (a proper load-cell mount bracket, not just glued/taped — mechanical mounting quality directly determines reading accuracy far more than anything in software). Electrically, wired to whichever board ends up owning it (this is the open question from Section 0).
 
+Prototype photo slots:
+
+- `images/load-cell-wiring-prototype.jpg` — load-cell wiring and breadboard prototype
+- `images/platform-weight-test.jpg` — platform test with known items on the scale
+
 ### 1.3 11.1V 5200mAh 3S Li-ion Battery (~₹1249)
 
 - **Purpose:** Portable power source for the whole cart electronics stack, since a shopping cart obviously can't be tethered to a wall outlet.
