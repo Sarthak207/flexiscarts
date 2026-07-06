@@ -43,7 +43,7 @@ Prototype calibration photo slot:
 4. A hardware watchdog (30s) resets the board if the firmware ever hangs unexpectedly.
 5. A disconnected/unresponsive load cell is detected and logged as a fault instead of silently reporting a wrong zero.
 
-## Known limitations (stated plainly, not glossed over)
+## Known limitations 
 
 - Secrets are out of source control (`secrets.h`), but a compiled binary/flash dump from a physically-accessed board can still be reverse engineered — real protection against that needs ESP32 Secure Boot + Flash Encryption, which is out of scope for this milestone.
 - The single-point load cell (see Phase 2 hardware analysis) still has real off-center-loading error that no amount of firmware filtering fully removes.

@@ -82,7 +82,7 @@ scale limitation of that approach). If you've already generated shopper
 users against the old 32-char scheme, regenerate them — old tokens won't
 match the new on-screen keyboard's alphabet.
 
-## Known limitations (stated plainly)
+## Known limitations
 
 - No login method other than the on-screen keyboard — no QR/RFID scan-in,
   because that hardware isn't in your purchased list. If a QR/RFID reader
